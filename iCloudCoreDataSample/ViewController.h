@@ -10,4 +10,14 @@
 
 @interface ViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UITextField *bookNameTextField;
+@property (weak, nonatomic) IBOutlet UITextField *authorNameTextField;
+@property (weak, nonatomic) IBOutlet UILabel *countLabel;
+
+- (IBAction)pushSaveButton:(id)sender;
+- (IBAction)pushFindButton:(id)sender;
+- (IBAction)pushDeleteButton:(id)sender;
+- (IBAction)countModelNum:(id)sender;
+
+
 @end

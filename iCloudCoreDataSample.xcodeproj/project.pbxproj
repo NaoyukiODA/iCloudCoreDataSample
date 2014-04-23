@@ -21,6 +21,8 @@
 		6E0F48B7190782A800AD0C10 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E0F4899190782A800AD0C10 /* UIKit.framework */; };
 		6E0F48BF190782A800AD0C10 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6E0F48BD190782A800AD0C10 /* InfoPlist.strings */; };
 		6E0F48C1190782A800AD0C10 /* iCloudCoreDataSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F48C0190782A800AD0C10 /* iCloudCoreDataSampleTests.m */; };
+		6E0F48D31907841C00AD0C10 /* BookDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F48D11907841C00AD0C10 /* BookDataModel.xcdatamodeld */; };
+		6E0F491F190792E300AD0C10 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E0F491E190792E300AD0C10 /* CoreData.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +55,9 @@
 		6E0F48BC190782A800AD0C10 /* iCloudCoreDataSampleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iCloudCoreDataSampleTests-Info.plist"; sourceTree = "<group>"; };
 		6E0F48BE190782A800AD0C10 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6E0F48C0190782A800AD0C10 /* iCloudCoreDataSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iCloudCoreDataSampleTests.m; sourceTree = "<group>"; };
+		6E0F48CA190782B600AD0C10 /* iCloudCoreDataSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = iCloudCoreDataSample.entitlements; sourceTree = "<group>"; };
+		6E0F48D21907841C00AD0C10 /* BookDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BookDataModel.xcdatamodel; sourceTree = "<group>"; };
+		6E0F491E190792E300AD0C10 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E0F491F190792E300AD0C10 /* CoreData.framework in Frameworks */,
 				6E0F4898190782A800AD0C10 /* CoreGraphics.framework in Frameworks */,
 				6E0F489A190782A800AD0C10 /* UIKit.framework in Frameworks */,
 				6E0F4896190782A800AD0C10 /* Foundation.framework in Frameworks */,
@@ -101,6 +107,7 @@
 		6E0F4894190782A800AD0C10 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6E0F491E190792E300AD0C10 /* CoreData.framework */,
 				6E0F4895190782A800AD0C10 /* Foundation.framework */,
 				6E0F4897190782A800AD0C10 /* CoreGraphics.framework */,
 				6E0F4899190782A800AD0C10 /* UIKit.framework */,
@@ -112,6 +119,8 @@
 		6E0F489B190782A800AD0C10 /* iCloudCoreDataSample */ = {
 			isa = PBXGroup;
 			children = (
+				6E0F48CA190782B600AD0C10 /* iCloudCoreDataSample.entitlements */,
+				6E0F48D11907841C00AD0C10 /* BookDataModel.xcdatamodeld */,
 				6E0F48A4190782A800AD0C10 /* AppDelegate.h */,
 				6E0F48A5190782A800AD0C10 /* AppDelegate.m */,
 				6E0F48A7190782A800AD0C10 /* Main.storyboard */,
@@ -199,6 +208,14 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Oda Naoyuki";
 				TargetAttributes = {
+					6E0F4891190782A800AD0C10 = {
+						DevelopmentTeam = VTTAQ3SUUQ;
+						SystemCapabilities = {
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
+					};
 					6E0F48B2190782A800AD0C10 = {
 						TestTargetID = 6E0F4891190782A800AD0C10;
 					};
@@ -249,6 +266,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E0F48D31907841C00AD0C10 /* BookDataModel.xcdatamodeld in Sources */,
 				6E0F48AC190782A800AD0C10 /* ViewController.m in Sources */,
 				6E0F48A6190782A800AD0C10 /* AppDelegate.m in Sources */,
 				6E0F48A2190782A800AD0C10 /* main.m in Sources */,
@@ -376,6 +394,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = iCloudCoreDataSample/iCloudCoreDataSample.entitlements;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iCloudCoreDataSample/iCloudCoreDataSample-Prefix.pch";
 				INFOPLIST_FILE = "iCloudCoreDataSample/iCloudCoreDataSample-Info.plist";
@@ -389,6 +408,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = iCloudCoreDataSample/iCloudCoreDataSample.entitlements;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iCloudCoreDataSample/iCloudCoreDataSample-Prefix.pch";
 				INFOPLIST_FILE = "iCloudCoreDataSample/iCloudCoreDataSample-Info.plist";
@@ -466,6 +486,19 @@
 			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		6E0F48D11907841C00AD0C10 /* BookDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				6E0F48D21907841C00AD0C10 /* BookDataModel.xcdatamodel */,
+			);
+			currentVersion = 6E0F48D21907841C00AD0C10 /* BookDataModel.xcdatamodel */;
+			path = BookDataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 6E0F488A190782A800AD0C10 /* Project object */;
 }
