@@ -19,6 +19,11 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadFetchedResults:)
+                                                 name:@"RefetchAllDatabaseData"
+                                               object:nil];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -54,6 +59,23 @@
 }
 
 - (IBAction)countModelNum:(id)sender {
+//    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+//    
+//    NSManagedObjectContext *moContext = appDelegate.managedObjectContext;
+//    
+//    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Books"
+//                                                         inManagedObjectContext:moContext];
+//    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+//    [fetchRequest setEntity:entityDescription];
+//    
+//    NSError *error;
+//    
+//    NSArray *allEntities = [moContext executeFetchRequest:fetchRequest error:&error];
+//    
+//    self.countLabel.text = [NSString stringWithFormat:@"%lu", allEntities.count];
+}
+
+- (void)reloadFetchedResults:(NSNotification*)notification {
     AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
     NSManagedObjectContext *moContext = appDelegate.managedObjectContext;
@@ -69,4 +91,5 @@
     
     self.countLabel.text = [NSString stringWithFormat:@"%d", allEntities.count];
 }
+
 @end

@@ -112,9 +112,33 @@
     
     NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"iCloudCoreDataSample.sqlite"];
     
-    NSError *error = nil;
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+    __weak NSPersistentStoreCoordinator *psc = _persistentStoreCoordinator;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSMutableDictionary *options =  [@{NSMigratePersistentStoresAutomaticallyOption : @(YES),
+                                           NSInferMappingModelAutomaticallyOption : @(YES)} mutableCopy];
+        NSURL *cloudURL = [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:nil];
+        if (cloudURL) {
+            // iCloud 用の設定
+            cloudURL = [cloudURL URLByAppendingPathComponent:@"data"];
+            [options setValue:@"iCloudCoreDataSample.store" forKey:NSPersistentStoreUbiquitousContentNameKey];
+            [options setValue:cloudURL forKey:NSPersistentStoreUbiquitousContentURLKey];
+        }
+        NSError *error = nil;
+        [psc lock];
+        if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        }
+        [psc unlock];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // Core Data のセットアップが終わったことを通知する
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
+        });
+    });
+    return _persistentStoreCoordinator;
+//    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
         /*
          Replace this implementation with code to handle the error appropriately.
          
@@ -138,11 +162,18 @@
          Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
          
          */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
+//        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+//        abort();
+//    }
     
-    return _persistentStoreCoordinator;
+//    return _persistentStoreCoordinator;
+}
+
+- (void)updateFromiCloud:(NSNotification *)notification {
+    __weak NSManagedObjectContext* moc = [self managedObjectContext];
+    [moc performBlock:^{
+        [moc mergeChangesFromContextDidSaveNotification:notification];
+    }];
 }
 
 #pragma mark - Application's Documents directory
