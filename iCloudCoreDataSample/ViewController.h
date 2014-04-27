@@ -17,7 +17,9 @@
 - (IBAction)pushSaveButton:(id)sender;
 - (IBAction)pushFindButton:(id)sender;
 - (IBAction)pushDeleteButton:(id)sender;
-- (IBAction)countModelNum:(id)sender;
+- (IBAction)pushReadButton:(id)sender;
+- (IBAction)pushPrevButton:(id)sender;
+- (IBAction)pushNextButton:(id)sender;
 
 
 @end

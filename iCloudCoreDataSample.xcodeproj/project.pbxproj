@@ -23,6 +23,7 @@
 		6E0F48C1190782A800AD0C10 /* iCloudCoreDataSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F48C0190782A800AD0C10 /* iCloudCoreDataSampleTests.m */; };
 		6E0F48D31907841C00AD0C10 /* BookDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F48D11907841C00AD0C10 /* BookDataModel.xcdatamodeld */; };
 		6E0F491F190792E300AD0C10 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E0F491E190792E300AD0C10 /* CoreData.framework */; };
+		6EBB960F190BD7B800F91B2C /* Books.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EBB960E190BD7B800F91B2C /* Books.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,8 @@
 		6E0F48CA190782B600AD0C10 /* iCloudCoreDataSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = iCloudCoreDataSample.entitlements; sourceTree = "<group>"; };
 		6E0F48D21907841C00AD0C10 /* BookDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BookDataModel.xcdatamodel; sourceTree = "<group>"; };
 		6E0F491E190792E300AD0C10 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		6EBB960D190BD7B800F91B2C /* Books.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Books.h; sourceTree = "<group>"; };
+		6EBB960E190BD7B800F91B2C /* Books.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Books.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +124,8 @@
 			children = (
 				6E0F48CA190782B600AD0C10 /* iCloudCoreDataSample.entitlements */,
 				6E0F48D11907841C00AD0C10 /* BookDataModel.xcdatamodeld */,
+				6EBB960D190BD7B800F91B2C /* Books.h */,
+				6EBB960E190BD7B800F91B2C /* Books.m */,
 				6E0F48A4190782A800AD0C10 /* AppDelegate.h */,
 				6E0F48A5190782A800AD0C10 /* AppDelegate.m */,
 				6E0F48A7190782A800AD0C10 /* Main.storyboard */,
@@ -267,6 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E0F48D31907841C00AD0C10 /* BookDataModel.xcdatamodeld in Sources */,
+				6EBB960F190BD7B800F91B2C /* Books.m in Sources */,
 				6E0F48AC190782A800AD0C10 /* ViewController.m in Sources */,
 				6E0F48A6190782A800AD0C10 /* AppDelegate.m in Sources */,
 				6E0F48A2190782A800AD0C10 /* main.m in Sources */,
@@ -476,6 +482,7 @@
 				6E0F48C6190782A800AD0C10 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6E0F48C7190782A800AD0C10 /* Build configuration list for PBXNativeTarget "iCloudCoreDataSampleTests" */ = {
 			isa = XCConfigurationList;
@@ -484,6 +491,7 @@
 				6E0F48C9190782A800AD0C10 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

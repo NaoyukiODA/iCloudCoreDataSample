@@ -18,6 +18,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+    //iCloudを使用する為の設定を行う
+    [self setupManagedObjectContext];
 
     return YES;
 }
@@ -49,139 +52,79 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-- (void)saveContext
-{
-    NSError *error = nil;
-    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
-    if (managedObjectContext != nil) {
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
-    }
+//モデルファイルのURLを返す
+- (NSURL*)modelURL {
+    NSURL *retURL = [[NSBundle mainBundle] URLForResource:@"BookDataModel" withExtension:@"momd"];
+    return retURL;
 }
 
-#pragma mark - Core Data stack
-
-// Returns the managed object context for the application.
-// If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
-- (NSManagedObjectContext *)managedObjectContext
-{
-    if (_managedObjectContext != nil) {
-        return _managedObjectContext;
-    }
-    
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (coordinator != nil) {
-//        _managedObjectContext = [[NSManagedObjectContext alloc] init];
-//        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
-        NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
-        [moc performBlockAndWait:^{
-            [moc setPersistentStoreCoordinator:coordinator];
-            
-            //iCloudからの通知受信設定
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFromiCloud:)
-                                                name:NSPersistentStoreDidImportUbiquitousContentChangesNotification object:coordinator];
-        }];
-        _managedObjectContext = moc;
-    }
-    return _managedObjectContext;
+//永続化ストアファイルのURLを返す
+- (NSURL*)storeURL {
+    NSURL *retURL = nil;
+    NSArray *dirs = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    retURL = [NSURL fileURLWithPath:[[dirs lastObject]
+                                   stringByAppendingPathComponent:@"iCloudCoreDataSample.sqlite"]];
+    return retURL;
 }
 
-// Returns the managed object model for the application.
-// If the model doesn't already exist, it is created from the application's model.
-- (NSManagedObjectModel *)managedObjectModel
-{
-    if (_managedObjectModel != nil) {
-        return _managedObjectModel;
-    }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"BookDataModel" withExtension:@"momd"];
-    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-    return _managedObjectModel;
-}
-
-// Returns the persistent store coordinator for the application.
-// If the coordinator doesn't already exist, it is created and the application's store added to it.
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
-{
-    if (_persistentStoreCoordinator != nil) {
-        return _persistentStoreCoordinator;
-    }
+- (void)setupManagedObjectContext {
+    //管理オブジェクト生成
+    NSManagedObjectModel *model = [[NSManagedObjectModel alloc] initWithContentsOfURL:[self modelURL]];
     
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"iCloudCoreDataSample.sqlite"];
+    //永続ストアコーディネイター生成
+    NSPersistentStoreCoordinator *coordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:model];
     
-    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    __weak NSPersistentStoreCoordinator *psc = _persistentStoreCoordinator;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSMutableDictionary *options =  [@{NSMigratePersistentStoresAutomaticallyOption : @(YES),
-                                           NSInferMappingModelAutomaticallyOption : @(YES)} mutableCopy];
-        NSURL *cloudURL = [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:nil];
-        if (cloudURL) {
-            // iCloud 用の設定
-            cloudURL = [cloudURL URLByAppendingPathComponent:@"data"];
-            [options setValue:@"iCloudCoreDataSample.store" forKey:NSPersistentStoreUbiquitousContentNameKey];
-            [options setValue:cloudURL forKey:NSPersistentStoreUbiquitousContentURLKey];
-        }
-        NSError *error = nil;
-        [psc lock];
-        if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
-        [psc unlock];
+    //永続ストアの変更通知受信時処理設定
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(icloudDidImportContentChanges:)
+                                                 name:NSPersistentStoreDidImportUbiquitousContentChangesNotification
+                                               object:coordinator];
+    
+    //管理オブジェクトコンテキスト初期化
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // Core Data のセットアップが終わったことを通知する
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
-        });
-    });
-    return _persistentStoreCoordinator;
-//    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
-        /*
-         Replace this implementation with code to handle the error appropriately.
-         
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-         
-         Typical reasons for an error here include:
-         * The persistent store is not accessible;
-         * The schema for the persistent store is incompatible with current managed object model.
-         Check the error message to determine what the actual problem was.
-         
-         
-         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
-         
-         If you encounter schema incompatibility errors during development, you can reduce their frequency by:
-         * Simply deleting the existing store:
-         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
-         
-         * Performing automatic lightweight migration by passing the following dictionary as the options parameter:
-         @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
-         
-         Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
-         
-         */
-//        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-//        abort();
-//    }
+        //永続ストアコーディネイター生成オプションを格納する辞書
+        NSMutableDictionary *options = @{
+                                         NSMigratePersistentStoresAutomaticallyOption: @YES,
+                                         NSInferMappingModelAutomaticallyOption: @YES
+                                         }.mutableCopy;
+        
+        //コンテナのURL取得
+        NSURL *url = [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:nil];
     
-//    return _persistentStoreCoordinator;
+        //コンテナのURLがとれてたら(iCloudが有効だったら)永続ストアコーディネイタ生成オプションを実際に設定する
+        if (url)
+        {
+            options[NSPersistentStoreUbiquitousContentNameKey] = @"Books";
+            options[NSPersistentStoreUbiquitousContentURLKey] = @"data";
+        }
+    
+        //永続ストアコーディネイターに永続ストアを設定する
+        NSError *err = nil;
+        [coordinator addPersistentStoreWithType:NSSQLiteStoreType
+                                  configuration:nil
+                                            URL:[self storeURL]
+                                        options:options
+                                          error:&err];
+    
+        //管理オブジェクトコンテキストに永続ストアコーディネイターを設定する
+        _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+        [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+    });
 }
 
-- (void)updateFromiCloud:(NSNotification *)notification {
-    __weak NSManagedObjectContext* moc = [self managedObjectContext];
-    [moc performBlock:^{
-        [moc mergeChangesFromContextDidSaveNotification:notification];
+- (void)icloudDidImportContentChanges:(NSNotification*)noti {
+    NSLog(@"did import content");
+
+    [_managedObjectContext performBlock:^{
+        //通知に従って、管理オブジェクトに変更を適用する
+        [_managedObjectContext mergeChangesFromContextDidSaveNotification:noti];
+        
+        //管理オブジェクトの変更を永続化ストアへ保存
+        NSError *error = nil;
+        if (![_managedObjectContext save:&error])
+            NSLog(@"error in icloudDidImportContentChanges %@", error);
     }];
-}
-
-#pragma mark - Application's Documents directory
-
-// Returns the URL to the application's Documents directory.
-- (NSURL *)applicationDocumentsDirectory
-{
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
 @end

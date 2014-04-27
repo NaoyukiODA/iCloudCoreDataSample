@@ -11,6 +11,9 @@
 
 @interface ViewController ()
 
+@property (retain, nonatomic) NSArray *entities;
+@property int index;
+
 @end
 
 @implementation ViewController
@@ -19,11 +22,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reloadFetchedResults:)
-                                                 name:@"RefetchAllDatabaseData"
-                                               object:nil];
-
+    _index = 0;
 }
 
 - (void)didReceiveMemoryWarning
@@ -53,29 +52,37 @@
 }
 
 - (IBAction)pushFindButton:(id)sender {
+    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
+    NSManagedObjectContext *moContext = appDelegate.managedObjectContext;
+    
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Books"
+                                                         inManagedObjectContext:moContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:entityDescription];
+
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"bookName contains %@", self.bookNameTextField.text];
+    [fetchRequest setPredicate:pred];
+    
+    
+    NSError *error = nil;
+    _entities = [moContext executeFetchRequest:fetchRequest error:&error];
+    
+    for (NSEntityDescription* ed in _entities) {
+        NSString *bookName = [ed valueForKey:@"bookName"];
+        NSString *authorName = [ed valueForKey:@"authorName"];
+        NSLog(@" bookName = %@", bookName);
+        NSLog(@" authorName = %@", authorName);
+    }
+    
+    self.bookNameTextField.text = [_entities[0] valueForKey:@"bookName"];
+    self.authorNameTextField.text = [_entities[0] valueForKey:@"authorName"];
 }
 
 - (IBAction)pushDeleteButton:(id)sender {
 }
 
-- (IBAction)countModelNum:(id)sender {
-//    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-//    
-//    NSManagedObjectContext *moContext = appDelegate.managedObjectContext;
-//    
-//    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Books"
-//                                                         inManagedObjectContext:moContext];
-//    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-//    [fetchRequest setEntity:entityDescription];
-//    
-//    NSError *error;
-//    
-//    NSArray *allEntities = [moContext executeFetchRequest:fetchRequest error:&error];
-//    
-//    self.countLabel.text = [NSString stringWithFormat:@"%lu", allEntities.count];
-}
-
-- (void)reloadFetchedResults:(NSNotification*)notification {
+- (IBAction)pushReadButton:(id)sender {
     AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     
     NSManagedObjectContext *moContext = appDelegate.managedObjectContext;
@@ -85,11 +92,40 @@
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:entityDescription];
     
-    NSError *error;
+    NSError *error = nil;
     
-    NSArray *allEntities = [moContext executeFetchRequest:fetchRequest error:&error];
+    _entities = [moContext executeFetchRequest:fetchRequest error:&error];
     
-    self.countLabel.text = [NSString stringWithFormat:@"%d", allEntities.count];
+    for (NSEntityDescription* ed in _entities) {
+        NSString *bookName = [ed valueForKey:@"bookName"];
+        NSString *authorName = [ed valueForKey:@"authorName"];
+        NSLog(@" bookName = %@", bookName);
+        NSLog(@" authorName = %@", authorName);
+    }
+    
+    self.countLabel.text = [NSString stringWithFormat:@"%lu entities", (unsigned long)_entities.count];
+    self.bookNameTextField.text = [_entities[0] valueForKey:@"bookName"];
+    self.authorNameTextField.text = [_entities[0] valueForKey:@"authorName"];
+    
+    NSLog(@"NSSet \n %@", [[appDelegate.managedObjectContext registeredObjects] description]);
+}
+
+- (IBAction)pushPrevButton:(id)sender {
+    if(_index > 0 && _entities != nil)
+    {
+        _index = _index - 1;
+        self.bookNameTextField.text = [_entities[_index] valueForKey:@"bookName"];
+        self.authorNameTextField.text = [_entities[_index] valueForKey:@"authorName"];
+    }
+}
+
+- (IBAction)pushNextButton:(id)sender {
+    if(_entities != nil && _index < _entities.count - 1)
+    {
+        _index = _index + 1;
+        self.bookNameTextField.text = [_entities[_index] valueForKey:@"bookName"];
+        self.authorNameTextField.text = [_entities[_index] valueForKey:@"authorName"];
+    }
 }
 
 @end
