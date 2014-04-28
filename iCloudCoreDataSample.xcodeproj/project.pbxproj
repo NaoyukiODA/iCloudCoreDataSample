@@ -23,6 +23,7 @@
 		6E0F48C1190782A800AD0C10 /* iCloudCoreDataSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F48C0190782A800AD0C10 /* iCloudCoreDataSampleTests.m */; };
 		6E0F48D31907841C00AD0C10 /* BookDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F48D11907841C00AD0C10 /* BookDataModel.xcdatamodeld */; };
 		6E0F491F190792E300AD0C10 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E0F491E190792E300AD0C10 /* CoreData.framework */; };
+		6E69E8E0190DFB90008FBEEC /* DataStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E69E8DF190DFB90008FBEEC /* DataStore.m */; };
 		6EBB960F190BD7B800F91B2C /* Books.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EBB960E190BD7B800F91B2C /* Books.m */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +60,8 @@
 		6E0F48CA190782B600AD0C10 /* iCloudCoreDataSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = iCloudCoreDataSample.entitlements; sourceTree = "<group>"; };
 		6E0F48D21907841C00AD0C10 /* BookDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BookDataModel.xcdatamodel; sourceTree = "<group>"; };
 		6E0F491E190792E300AD0C10 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		6E69E8DE190DFB90008FBEEC /* DataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataStore.h; sourceTree = "<group>"; };
+		6E69E8DF190DFB90008FBEEC /* DataStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataStore.m; sourceTree = "<group>"; };
 		6EBB960D190BD7B800F91B2C /* Books.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Books.h; sourceTree = "<group>"; };
 		6EBB960E190BD7B800F91B2C /* Books.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Books.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -128,6 +131,8 @@
 				6EBB960E190BD7B800F91B2C /* Books.m */,
 				6E0F48A4190782A800AD0C10 /* AppDelegate.h */,
 				6E0F48A5190782A800AD0C10 /* AppDelegate.m */,
+				6E69E8DE190DFB90008FBEEC /* DataStore.h */,
+				6E69E8DF190DFB90008FBEEC /* DataStore.m */,
 				6E0F48A7190782A800AD0C10 /* Main.storyboard */,
 				6E0F48AA190782A800AD0C10 /* ViewController.h */,
 				6E0F48AB190782A800AD0C10 /* ViewController.m */,
@@ -276,6 +281,7 @@
 				6E0F48AC190782A800AD0C10 /* ViewController.m in Sources */,
 				6E0F48A6190782A800AD0C10 /* AppDelegate.m in Sources */,
 				6E0F48A2190782A800AD0C10 /* main.m in Sources */,
+				6E69E8E0190DFB90008FBEEC /* DataStore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

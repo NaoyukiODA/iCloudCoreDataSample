@@ -7,7 +7,8 @@
 //
 
 #import "ViewController.h"
-#import "AppDelegate.h"
+#import <CoreData/CoreData.h>
+#import "DataStore.h"
 
 @interface ViewController ()
 
@@ -32,9 +33,9 @@
 }
 
 - (IBAction)pushSaveButton:(id)sender {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    DataStore *dataStore = [DataStore sharedInstance];
     
-    NSManagedObjectContext *moContext = appDelegate.managedObjectContext;
+    NSManagedObjectContext *moContext = dataStore.managedObjectContext;
     NSManagedObject *newBook;
     
     newBook = [NSEntityDescription insertNewObjectForEntityForName:@"Books"
@@ -52,9 +53,9 @@
 }
 
 - (IBAction)pushFindButton:(id)sender {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    DataStore *dataStore = [DataStore sharedInstance];
     
-    NSManagedObjectContext *moContext = appDelegate.managedObjectContext;
+    NSManagedObjectContext *moContext = dataStore.managedObjectContext;
     
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Books"
                                                          inManagedObjectContext:moContext];
@@ -83,9 +84,9 @@
 }
 
 - (IBAction)pushReadButton:(id)sender {
-    AppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    DataStore *dataStore = [DataStore sharedInstance];
     
-    NSManagedObjectContext *moContext = appDelegate.managedObjectContext;
+    NSManagedObjectContext *moContext = dataStore.managedObjectContext;
     
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Books"
                                                          inManagedObjectContext:moContext];
@@ -107,7 +108,7 @@
     self.bookNameTextField.text = [_entities[0] valueForKey:@"bookName"];
     self.authorNameTextField.text = [_entities[0] valueForKey:@"authorName"];
     
-    NSLog(@"NSSet \n %@", [[appDelegate.managedObjectContext registeredObjects] description]);
+    NSLog(@"NSSet \n %@", [[dataStore.managedObjectContext registeredObjects] description]);
 }
 
 - (IBAction)pushPrevButton:(id)sender {
