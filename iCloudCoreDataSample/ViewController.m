@@ -13,6 +13,7 @@
 @interface ViewController ()
 
 @property (retain, nonatomic) NSArray *entities;
+@property (retain, nonatomic) NSSet *entitiesSet;
 @property int index;
 
 @end
@@ -47,7 +48,6 @@
     self.authorNameTextField.text = @"";
     
     NSError *error;
-    
     [moContext save:&error];
     
 }
@@ -62,25 +62,33 @@
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     [fetchRequest setEntity:entityDescription];
 
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"bookName contains %@", self.bookNameTextField.text];
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"authorName contains %@", self.authorNameTextField.text];
     [fetchRequest setPredicate:pred];
     
     
     NSError *error = nil;
     _entities = [moContext executeFetchRequest:fetchRequest error:&error];
     
-    for (NSEntityDescription* ed in _entities) {
-        NSString *bookName = [ed valueForKey:@"bookName"];
-        NSString *authorName = [ed valueForKey:@"authorName"];
+    for (NSManagedObject* obj in _entities) {
+        NSString *bookName = [obj valueForKey:@"bookName"];
+        NSString *authorName = [obj valueForKey:@"authorName"];
         NSLog(@" bookName = %@", bookName);
         NSLog(@" authorName = %@", authorName);
+        NSLog(@" ManagedObject ID = %@", [obj objectID]);
+        NSLog(@" object class = %@", NSStringFromClass([obj class]));
     }
     
-    self.bookNameTextField.text = [_entities[0] valueForKey:@"bookName"];
-    self.authorNameTextField.text = [_entities[0] valueForKey:@"authorName"];
+    [self dispBookDataAtIndex:0];
 }
 
 - (IBAction)pushDeleteButton:(id)sender {
+    DataStore *dataStore = [DataStore sharedInstance];
+    
+    NSManagedObjectContext *moContext = dataStore.managedObjectContext;
+    
+    NSError *error;
+    [moContext deleteObject:_entities[_index]];
+    [moContext save:&error];
 }
 
 - (IBAction)pushReadButton:(id)sender {
@@ -97,17 +105,20 @@
     
     _entities = [moContext executeFetchRequest:fetchRequest error:&error];
     
-    for (NSEntityDescription* ed in _entities) {
-        NSString *bookName = [ed valueForKey:@"bookName"];
-        NSString *authorName = [ed valueForKey:@"authorName"];
-        NSLog(@" bookName = %@", bookName);
-        NSLog(@" authorName = %@", authorName);
+    if(_entities != nil)
+    {
+        for (NSManagedObject* obj in _entities) {
+            NSString *bookName = [obj valueForKey:@"bookName"];
+            NSString *authorName = [obj valueForKey:@"authorName"];
+            NSLog(@" bookName = %@", bookName);
+            NSLog(@" authorName = %@", authorName);
+            NSLog(@" ManagedObject ID = %@", [obj objectID]);
+            NSLog(@" object class = %@", NSStringFromClass([obj class]));
+        }
+
+        self.countLabel.text = [NSString stringWithFormat:@"%lu entities", (unsigned long)_entities.count];
+        [self dispBookDataAtIndex:_index];
     }
-    
-    self.countLabel.text = [NSString stringWithFormat:@"%lu entities", (unsigned long)_entities.count];
-    self.bookNameTextField.text = [_entities[0] valueForKey:@"bookName"];
-    self.authorNameTextField.text = [_entities[0] valueForKey:@"authorName"];
-    
     NSLog(@"NSSet \n %@", [[dataStore.managedObjectContext registeredObjects] description]);
 }
 
@@ -115,8 +126,7 @@
     if(_index > 0 && _entities != nil)
     {
         _index = _index - 1;
-        self.bookNameTextField.text = [_entities[_index] valueForKey:@"bookName"];
-        self.authorNameTextField.text = [_entities[_index] valueForKey:@"authorName"];
+        [self dispBookDataAtIndex:_index];
     }
 }
 
@@ -124,9 +134,14 @@
     if(_entities != nil && _index < _entities.count - 1)
     {
         _index = _index + 1;
-        self.bookNameTextField.text = [_entities[_index] valueForKey:@"bookName"];
-        self.authorNameTextField.text = [_entities[_index] valueForKey:@"authorName"];
+        [self dispBookDataAtIndex:_index];
     }
+}
+
+-(void)dispBookDataAtIndex:(int)index
+{
+    self.bookNameTextField.text = [_entities[_index] valueForKey:@"bookName"];
+    self.authorNameTextField.text = [_entities[_index] valueForKey:@"authorName"];
 }
 
 @end
