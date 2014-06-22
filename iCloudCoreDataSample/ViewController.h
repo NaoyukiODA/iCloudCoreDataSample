@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DataStore.h"
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <DataStoreDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextField *bookNameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *authorNameTextField;

@@ -8,11 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol DataStoreDelegate <NSObject>
+
+- (void)upDateView;
+
+@end
+
 @interface DataStore : NSObject
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+@property (retain, nonatomic) id<DataStoreDelegate> delegate;
 
 +(DataStore *)sharedInstance;
 

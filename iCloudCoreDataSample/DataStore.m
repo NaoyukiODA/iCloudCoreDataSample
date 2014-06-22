@@ -82,6 +82,11 @@ static DataStore *shdInstance = nil;
     
     //永続ストアの変更通知受信時処理設定
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                              selector:@selector(iCloudPSCoordinatorStoresChanges)
+                                                  name:NSPersistentStoreCoordinatorStoresDidChangeNotification
+                                                object:coordinator];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(icloudDidImportContentChanges:)
                                                  name:NSPersistentStoreDidImportUbiquitousContentChangesNotification
                                                object:coordinator];
@@ -107,15 +112,20 @@ static DataStore *shdInstance = nil;
         
         //永続ストアコーディネイターに永続ストアを設定する
         NSError *err = nil;
+        [coordinator lock];
         [coordinator addPersistentStoreWithType:NSSQLiteStoreType
                                   configuration:nil
                                             URL:[self storeURL]
                                         options:options
                                           error:&err];
-        
+        [coordinator unlock];
         //管理オブジェクトコンテキストに永続ストアコーディネイターを設定する
         _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"fetchData" object:self userInfo:nil];
+        });
     });
 }
 
@@ -133,5 +143,9 @@ static DataStore *shdInstance = nil;
     }];
 }
 
+- (void)iCloudPSCoordinatorStoresChanges
+{
+    [self.delegate upDateView];
+}
 
 @end

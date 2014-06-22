@@ -25,6 +25,16 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     _index = 0;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadBookData) name:@"fetchData" object:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    DataStore *dataStore = [DataStore sharedInstance];
+    dataStore.delegate = self;
 }
 
 - (void)didReceiveMemoryWarning
@@ -96,6 +106,10 @@
     
     NSManagedObjectContext *moContext = dataStore.managedObjectContext;
     
+    if (moContext == nil) {
+        return;
+    }
+    
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"Books"
                                                          inManagedObjectContext:moContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
@@ -140,8 +154,20 @@
 
 -(void)dispBookDataAtIndex:(int)index
 {
-    self.bookNameTextField.text = [_entities[_index] valueForKey:@"bookName"];
-    self.authorNameTextField.text = [_entities[_index] valueForKey:@"authorName"];
+    if (_entities.count != 0) {
+        self.bookNameTextField.text = [_entities[_index] valueForKey:@"bookName"];
+        self.authorNameTextField.text = [_entities[_index] valueForKey:@"authorName"];
+    }
+}
+
+- (void)upDateView
+{
+        [self pushReadButton:nil];
+}
+
+- (void)reloadBookData
+{
+        [self pushReadButton:nil];
 }
 
 @end
